@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<!-- 加入 maximum-scale=1.0 確保平板與手機不會因為雙擊而意外縮放 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>成語獸｜成語故事創作任務</title>
+<style>
+:root {
+  --ink: #2b2839; --muted: #687386; --paper: #fffdf8; --line: #e7e2d8;
+  --purple: #8b5cf6; --purple-dark: #7c3aed; --lav: #ede9fe;
+  --orange: #fb923c; --mint: #d1fae5; --pink: #fce7f3; --yellow: #fef08a;
+  --blue: #bae6fd; --green: #10b981;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #fdfaf6; color: var(--ink); font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; line-height: 1.65; overflow-x: hidden; font-size: 16px; }
+
+/* 活潑的動畫設計 */
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+@keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
+
+header { background: linear-gradient(135deg, #a78bfa, #818cf8); color: white; padding: 40px 18px 30px; text-align: center; position: relative; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3); }
+header .tag { display: inline-block; background: rgba(255,255,255,0.2); border-radius: 99px; padding: 5px 16px; font-size: 14px; letter-spacing: 1px; font-weight: bold; backdrop-filter: blur(5px); }
+h1 { margin: 15px 0 8px; font-size: clamp(28px, 6vw, 42px); letter-spacing: 2px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+header p { margin: 0; color: #f5f3ff; font-size: 1.1em; }
+.mascot-decor { font-size: 40px; position: absolute; animation: float 4s ease-in-out infinite; }
+.mascot-1 { top: 20px; left: 10%; }
+.mascot-2 { bottom: 20px; right: 10%; animation-delay: 1s; }
+
+main { max-width: 950px; margin: 30px auto; padding: 0 20px 60px; }
+.panel { background: white; border: 2px solid var(--lav); border-radius: 24px; padding: 25px 30px; margin: 20px 0; box-shadow: 0 8px 0 var(--lav); transition: transform 0.2s; }
+.panel:hover { transform: translateY(-2px); }
+.panel h2 { font-size: 22px; margin: 0 0 18px; display: flex; align-items: center; gap: 10px; color: var(--purple-dark); }
+.num { background: var(--purple); color: white; border-radius: 12px; padding: 4px 12px; font-size: 16px; font-weight: bold; box-shadow: 0 2px 0 var(--purple-dark); }
+.intro { background: var(--yellow); border: 2px solid #fde047; box-shadow: 0 8px 0 #fde047; }
+.intro h2 { color: #854d0e; }
+
+label { display: block; font-weight: 700; margin: 15px 0 8px; color: #4c1d95; }
+/* 平板優化：字體強制 16px 避免縮放，加大 padding */
+input, textarea, select { width: 100%; border: 2px solid #ddd6fe; border-radius: 14px; padding: 14px 16px; font: inherit; font-size: 16px; color: var(--ink); background: #f8fafc; transition: all 0.3s; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--purple); background: white; box-shadow: 0 0 0 4px var(--lav); }
+textarea { min-height: 100px; resize: vertical; line-height: 1.7; }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.choices { display: flex; flex-wrap: wrap; gap: 10px; }
+.choice { border: 2px solid #e2e8f0; background: white; color: #64748b; border-radius: 999px; padding: 10px 18px; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 16px; }
+.choice:hover { border-color: var(--purple); transform: scale(1.05); }
+.choice.active { background: var(--purple); border-color: var(--purple-dark); color: white; box-shadow: 0 4px 0 var(--purple-dark); transform: translateY(-2px); }
+
+.hint { font-size: 14px; color: #8b5cf6; margin: 5px 0 10px; font-weight: bold; }
+.story-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+/* 四格不同顏色，視覺更活潑 */
+.step { border: 2px solid var(--mint); border-radius: 18px; padding: 20px; background: #f0fdf4; box-shadow: 0 4px 0 #bbf7d0; }
+.step:nth-child(2) { border-color: var(--blue); background: #f0f9ff; box-shadow: 0 4px 0 #bae6fd; }
+.step:nth-child(3) { border-color: var(--pink); background: #fdf2f8; box-shadow: 0 4px 0 #fbcfe8; }
+.step:nth-child(4) { border-color: #fde047; background: #fefce8; box-shadow: 0 4px 0 #fef08a; }
+.step b { display: block; color: var(--ink); margin-bottom: 8px; font-size: 18px; }
+.step textarea { min-height: 110px; border-color: rgba(0,0,0,0.1); margin-top: 8px; }
+.prompt-text { display: block; font-size: 15px; color: #475569; min-height: 48px; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+button { border: 0; border-radius: 14px; padding: 14px 22px; font: inherit; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 16px; }
+.primary { background: var(--purple); color: white; box-shadow: 0 4px 0 var(--purple-dark); }
+.secondary { background: #f1f5f9; color: #475569; border: 2px solid #e2e8f0; box-shadow: 0 4px 0 #cbd5e1; }
+.orange { background: var(--orange); color: white; box-shadow: 0 4px 0 #ea580c; }
+.green { background: var(--green); color: white; box-shadow: 0 4px 0 #059669; }
+button:hover { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+button:active { transform: translateY(4px); box-shadow: 0 0 0; }
+
+/* 修正 Bug：將原本的 div 改為可編輯的 textarea */
+#result { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 20px; min-height: 250px; font-size: 16px; }
+.checklist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.checklist label { font-weight: 500; margin: 0; background: #f1f5f9; padding: 12px 14px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.checklist input[type="checkbox"] { width: 20px; height: 20px; margin: 0; }
+footer { text-align: center; color: var(--muted); font-size: 14px; padding: 10px 0 30px; }
+
+/* 登入畫面 */
+.login-screen { min-height: 100vh; display: grid; place-items: center; padding: 22px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
+.login-card { width: min(100%, 460px); background: #fff; border: 3px solid #e2e8f0; border-radius: 30px; padding: 40px 30px; box-shadow: 0 20px 40px rgba(100,116,139,0.1); text-align: center; animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.login-mark { font-size: 55px; margin-bottom: 10px; animation: float 3s infinite ease-in-out; }
+.login-kicker { font-size: 14px; color: var(--purple); letter-spacing: 2px; font-weight: 700; background: var(--lav); display: inline-block; padding: 4px 12px; border-radius: 20px; }
+.login-card h1 { font-size: 28px; color: var(--ink); margin: 15px 0 5px; }
+.login-card p { color: #64748b; margin: 0 0 25px; }
+.login-card form { text-align: left; }
+.login-button { width: 100%; margin-top: 25px; font-size: 18px; padding: 15px; }
+.login-note { font-size: 13px; color: #94a3b8; margin-top: 20px; line-height: 1.6; }
+.credit-login { border-top: 2px dashed #f1f5f9; margin-top: 25px; padding-top: 15px; color: var(--purple-dark); font-weight: 700; font-size: 14px; }
+.userbar { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; font-size: 15px; }
+.userbar button { padding: 6px 14px; background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.4); border-radius: 12px; font-size: 14px; box-shadow: none; }
+
+/* 自訂 Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: grid; place-items: center; z-index: 9999; padding: 20px; backdrop-filter: blur(3px); }
+.modal-content { background: white; padding: 30px; border-radius: 24px; max-width: 550px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: bounceIn 0.4s ease; }
+.modal-content h3 { margin: 0 0 15px; color: var(--purple-dark); font-size: 22px; display: flex; align-items: center; gap: 8px; }
+.modal-body { font-size: 16px; color: var(--ink); line-height: 1.7; margin-bottom: 25px; }
+.modal-body .hl { color: #d97706; background: #fef3c7; padding: 2px 6px; border-radius: 6px; font-weight: bold; }
+.modal-body h4 { margin: 20px 0 10px; color: var(--purple); font-size: 18px; border-bottom: 2px solid var(--lav); padding-bottom: 5px; }
+
+[hidden] { display: none !important; }
+@media print { .login-screen, .userbar, .actions, button { display: none !important; } body { background: white; } .panel { border: 1px solid #ccc; box-shadow: none; margin: 10px 0; } }
+@media(max-width: 768px) { .grid, .story-steps, .checklist { grid-template-columns: 1fr; gap: 15px; } .panel { padding: 20px; } .mascot-decor { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- 自訂對話框 -->
+<div id="customModal" class="modal-overlay" hidden>
+  <div class="modal-content">
+    <h3 id="modalTitle">提示</h3>
+    <div id="modalBody" class="modal-body"></div>
+    <div class="actions" style="justify-content: flex-end; margin-top: 10px;">
+      <button id="modalCancel" class="secondary" hidden>取消</button>
+      <button id="modalOk" class="primary">確定</button>
+    </div>
+  </div>
+</div>
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-mark">🐾</div>
+    <div class="login-kicker">成語獸・故事創作任務</div>
+    <h1>歡迎來到成語故事魔法工坊</h1>
+    <p>登入後開始你的成語故事冒險！</p>
+    <form id="loginForm">
+      <label for="studentClass">班級</label>
+      <input id="studentClass" required placeholder="例如：701" autocomplete="off">
+      <label for="studentName">姓名</label>
+      <input id="studentName" required placeholder="請輸入姓名" autocomplete="name">
+      <button class="primary login-button" id="enterWorkshopButton" type="button">進入故事工坊 ✨</button>
+    </form>
+    <div class="login-note">本頁為課堂學習使用，登入資料僅顯示於目前瀏覽器，不會傳送至伺服器。</div>
+    <div class="credit-login">中和國中｜蔡金錠老師設計</div>
+  </div>
+</div>
+
+<div id="appContent" hidden>
+<header>
+  <span class="mascot-decor mascot-1">🦄</span>
+  <span class="mascot-decor mascot-2">🦊</span>
+  <span class="tag">成語獸・創作任務</span>
+  <h1>成語故事魔法工坊</h1>
+  <p>選成語、造角色、編情節，讓成語在故事裡活起來！</p>
+  <div class="userbar"><span id="welcomeText">歡迎！</span><button id="logout" type="button">登出</button></div>
+</header>
+<main>
+  <section class="panel intro">
+    <h2>🎯 任務說明</h2>
+    <p style="margin-top:0;">挑選 <b>3～5 個成語</b>，把它們自然地放進同一個故事。故事要有開端、發展、轉折與結局，而且每個成語都要用在正確的情境中。</p>
+    <button id="btnShowTemplates" class="green">📖 觀看故事範本</button>
+  </section>
+
+  <section class="panel">
+    <h2><span class="num">01</span> 選擇你的故事元素</h2>
+    <label>故事類型</label>
+    <div class="choices" id="genres">
+      <button class="choice active" data-value="奇幻冒險">🪄 奇幻冒險</button>
+      <button class="choice" data-value="校園生活">🏫 校園生活</button>
+      <button class="choice" data-value="推理偵探">🔎 推理偵探</button>
+      <button class="choice" data-value="搞笑故事">🤣 搞笑故事</button>
+      <button class="choice" data-value="自創世界">🌈 自創世界</button>
+    </div>
+    <div class="grid">
+      <div><label for="hero">故事主角</label><input id="hero" placeholder="例如：一位勇敢但有點粗心的學生"></div>
+      <div><label for="place">故事舞臺</label><input id="place" placeholder="例如：魔法學校、奇幻森林"></div>
+      <div><label for="style">故事風格</label><select id="style"><option value="幽默有趣">幽默有趣</option><option value="緊張刺激">緊張刺激</option><option value="溫暖感人">溫暖感人</option><option value="神祕懸疑">神祕懸疑</option></select></div>
+      <div><label for="event">重要事件</label><input id="event" placeholder="例如：一場意想不到的比賽"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2><span class="num">02</span> 挑選 3～5 個成語</h2>
+    <p class="hint">可以使用下方成語，也可以自行輸入。至少 3 個、最多 5 個。</p>
+    <div class="choices" id="idiomChoices">
+      <button class="choice" data-value="守株待兔">守株待兔</button>
+      <button class="choice" data-value="畫蛇添足">畫蛇添足</button>
+      <button class="choice" data-value="亡羊補牢">亡羊補牢</button>
+      <button class="choice" data-value="一舉兩得">一舉兩得</button>
+      <button class="choice" data-value="井底之蛙">井底之蛙</button>
+      <button class="choice" data-value="狐假虎威">狐假虎威</button>
+      <button class="choice" data-value="自相矛盾">自相矛盾</button>
+      <button class="choice" data-value="半途而廢">半途而廢</button>
+    </div>
+    <label for="customIdioms">我的成語（可補充或直接輸入，以逗號分隔）</label>
+    <input id="customIdioms" placeholder="例如：刻舟求劍、掩耳盜鈴">
+    <p class="hint" id="idiomCount">目前選擇 0 個成語</p>
+  </section>
+
+  <section class="panel">
+    <h2><span class="num">03</span> 故事四格：安排情節</h2>
+    <p class="hint">先用簡短句子記下想法，不必一次寫得很完整。</p>
+    <div class="story-steps">
+      <div class="step">
+        <b>🌱 開端｜故事開始</b>
+        <span class="prompt-text" id="prompt-begin">主角原本正在做什麼？發生了什麼魔法意外？</span>
+        <textarea id="begin" placeholder="有一天，主角來到奇幻森林……突然……"></textarea>
+      </div>
+      <div class="step">
+        <b>⚡ 發展｜遇到困難</b>
+        <span class="prompt-text" id="prompt-develop">主角碰上什麼怪獸或難題？他用了什麼法寶？</span>
+        <textarea id="develop" placeholder="為了解決危機，主角決定……"></textarea>
+      </div>
+      <div class="step">
+        <b>🎢 轉折｜意外發生</b>
+        <span class="prompt-text" id="prompt-turn">出現什麼令人驚訝的變化？哪個成語最適合？</span>
+        <textarea id="turn" placeholder="沒想到魔法竟然……這時……"></textarea>
+      </div>
+      <div class="step">
+        <b>🏁 結局｜問題解決</b>
+        <span class="prompt-text" id="prompt-end">主角如何化解危機？最後學到了什麼？</span>
+        <textarea id="end" placeholder="最後，主角終於打敗……他也明白了……"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2><span class="num">04</span> 故事檢查站</h2>
+    <div class="checklist">
+      <label><input type="checkbox" class="check"> 故事有吸引人的標題</label>
+      <label><input type="checkbox" class="check"> 使用了 3～5 個成語</label>
+      <label><input type="checkbox" class="check"> 每個成語都用得恰當</label>
+      <label><input type="checkbox" class="check"> 有開端、發展、轉折、結局</label>
+      <label><input type="checkbox" class="check"> 情節連貫，有創意</label>
+      <label><input type="checkbox" class="check"> 已檢查錯字與標點</label>
+    </div>
+    <label for="title">幫故事取一個名字</label>
+    <input id="title" placeholder="例如：成語獸學院的神祕任務">
+    <div class="actions">
+      <button class="primary" id="make">✨ 產出並編輯草稿</button>
+      <button class="secondary" id="reset">重新開始</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>📜 我的故事草稿（可自由編輯）</h2>
+    <textarea id="result" placeholder="完成前面的任務後，按下「產出並編輯草稿」，你的創作內容就會出現在這裡，並且可以隨時手動修改喔！"></textarea>
+  </section>
+  <footer>成語獸故事創作任務｜把成語用進生活，把想像寫成故事<br><strong>中和國中 蔡金錠老師設計</strong></footer>
+</main>
+</div>
+
+<!-- 故事範本內容 (隱藏) -->
+<template id="tplStories">
+  <h4>🪄 範本一：長篇（奇幻冒險）</h4>
+  <p><strong>標題：</strong>雲端圖書館的勇氣考驗<br>
+  <strong>成語：</strong><span class="hl">守株待兔</span>、<span class="hl">畫蛇添足</span>、<span class="hl">狐假虎威</span>、<span class="hl">亡羊補牢</span></p>
+  <p><strong>【開端】</strong>膽小的狐狸阿毛想找勇氣魔法書，但他怕黑，只好在門口等，心想書會自己掉下來，這種<span class="hl">守株待兔</span>的方法根本沒用。</p>
+  <p><strong>【發展】</strong>他施展尋物魔法，卻自作聰明多唸了兩句咒語，結果<span class="hl">畫蛇添足</span>，變出了一隻幻影老虎！</p>
+  <p><strong>【轉折】</strong>老虎到處破壞，阿毛靈機一動，躲在老虎背後對書精靈大喊：「這是我召喚的神獸！」他藉著這招<span class="hl">狐假虎威</span>唬住了大家。</p>
+  <p><strong>【結局】</strong>最後老虎失控，阿毛鼓起勇氣衝上前解除咒語，趕緊<span class="hl">亡羊補牢</span>。他終於明白面對錯誤就是最大的勇氣。</p>
+  
+  <h4>🏫 範本二：短篇（校園生活）</h4>
+  <p><strong>標題：</strong>打掃時間的鬧劇<br>
+  <strong>成語：</strong><span class="hl">半途而廢</span>、<span class="hl">一舉兩得</span>、<span class="hl">井底之蛙</span></p>
+  <p><strong>【開端】</strong>小明負責打掃落葉，但他掃到一半覺得太累，就<span class="hl">半途而廢</span>跑去打球了。</p>
+  <p><strong>【發展】</strong>老師發現後，要求他不僅要掃完，還要順便幫花圃澆水，希望他能<span class="hl">一舉兩得</span>完成兩件事。</p>
+  <p><strong>【轉折】</strong>小明以為澆水很簡單，拿著水管亂噴，結果把同學的鞋子全弄濕了。他這才發現自己像隻<span class="hl">井底之蛙</span>，把事情想得太容易。</p>
+  <p><strong>【結局】</strong>最後小明只好乖乖留下來把地板拖乾，學到了做事必須腳踏實地的教訓。</p>
+</template>
+
+<script>
+// 自訂故事類型的引導語
+const genrePrompts = {
+  "奇幻冒險": {
+    begin: { prompt: "主角原本正在做什麼？發生了什麼魔法意外？", placeholder: "有一天，主角來到奇幻森林……突然……" },
+    develop: { prompt: "主角碰上什麼怪獸或難題？他用了什麼法寶？", placeholder: "為了解決危機，主角決定……" },
+    turn: { prompt: "出現什麼令人驚訝的變化？哪個成語最適合？", placeholder: "沒想到魔法竟然……這時……" },
+    end: { prompt: "主角如何化解危機？最後學到了什麼？", placeholder: "最後，主角終於打敗……他也明白了……" }
+  },
+  "校園生活": {
+    begin: { prompt: "主角在學校原本正在做什麼？發生了什麼意外？", placeholder: "今天早自習，主角正在……突然……" },
+    develop: { prompt: "主角碰上什麼麻煩？同學或老師有什麼反應？", placeholder: "為了應付老師，主角決定……" },
+    turn: { prompt: "事情發生了什麼出乎意料的變化？哪個成語最適合？", placeholder: "沒想到同學竟然……這時……" },
+    end: { prompt: "主角最後如何解決？學到了什麼教訓？", placeholder: "最後，主角終於承認……他也明白了……" }
+  },
+  "推理偵探": {
+    begin: { prompt: "主角在哪裡發現了什麼神祕事件？", placeholder: "深夜，主角在案發現場發現……突然……" },
+    develop: { prompt: "主角找到了什麼線索？遇到什麼阻礙？", placeholder: "為了尋找真相，主角決定……" },
+    turn: { prompt: "出現什麼意想不到的嫌疑人？哪個成語最適合？", placeholder: "沒想到真兇竟然是……這時……" },
+    end: { prompt: "主角如何解開謎團？最後學到了什麼？", placeholder: "最後，真相大白……他也明白了……" }
+  },
+  "搞笑故事": {
+    begin: { prompt: "主角準備做什麼超蠢的事？", placeholder: "有一天，主角突發奇想……突然……" },
+    develop: { prompt: "發生了什麼爆笑的意外？", placeholder: "為了掩飾尷尬，主角決定……" },
+    turn: { prompt: "場面如何變得一發不可收拾？哪個成語最適合？", placeholder: "沒想到事情越搞越砸……這時……" },
+    end: { prompt: "這場鬧劇如何收場？最後學到了什麼？", placeholder: "最後，主角笑著……他也明白了……" }
+  },
+  "自創世界": {
+    begin: { prompt: "主角原本正在做什麼？發生了什麼意外？", placeholder: "有一天，主角來到……突然……" },
+    develop: { prompt: "主角碰上什麼麻煩？他做了哪些嘗試？", placeholder: "為了解決問題，主角決定……" },
+    turn: { prompt: "出現什麼令人驚訝的變化？哪個成語最適合？", placeholder: "沒想到事情竟然……這時……" },
+    end: { prompt: "主角如何解決問題？最後學到了什麼？", placeholder: "最後，主角終於……他也明白了……" }
+  }
+};
+
+function updatePrompts(genreName) {
+  const p = genrePrompts[genreName] || genrePrompts["自創世界"];
+  document.getElementById("prompt-begin").textContent = p.begin.prompt;
+  document.getElementById("begin").placeholder = p.begin.placeholder;
+  document.getElementById("prompt-develop").textContent = p.develop.prompt;
+  document.getElementById("develop").placeholder = p.develop.placeholder;
+  document.getElementById("prompt-turn").textContent = p.turn.prompt;
+  document.getElementById("turn").placeholder = p.turn.placeholder;
+  document.getElementById("prompt-end").textContent = p.end.prompt;
+  document.getElementById("end").placeholder = p.end.placeholder;
+}
+
+// 自訂對話框功能 (取代原生 alert/confirm)
+function customAlert(msg, title="提示") {
+  return new Promise(resolve => {
+    document.getElementById("modalTitle").innerHTML = `✨ ${title}`;
+    document.getElementById("modalBody").innerHTML = msg;
+    document.getElementById("modalCancel").hidden = true;
+    document.getElementById("customModal").hidden = false;
+    document.getElementById("modalOk").onclick = () => {
+      document.getElementById("customModal").hidden = true;
+      resolve();
+    };
+  });
+}
+
+function customConfirm(msg, title="請確認") {
+  return new Promise(resolve => {
+    document.getElementById("modalTitle").innerHTML = `🤔 ${title}`;
+    document.getElementById("modalBody").innerHTML = msg;
+    document.getElementById("modalCancel").hidden = false;
+    document.getElementById("customModal").hidden = false;
+    document.getElementById("modalOk").onclick = () => {
+      document.getElementById("customModal").hidden = true;
+      resolve(true);
+    };
+    document.getElementById("modalCancel").onclick = () => {
+      document.getElementById("customModal").hidden = true;
+      resolve(false);
+    };
+  });
+}
+
+const loginScreen=document.getElementById("loginScreen");
+const appContent=document.getElementById("appContent");
+appContent.hidden=true;
+
+async function enterWorkshop(){
+  const cls=document.getElementById("studentClass").value.trim();
+  const name=document.getElementById("studentName").value.trim();
+  if(!cls || !name){
+    await customAlert("請先輸入班級和姓名，再進入故事工坊喔！");
+    return;
+  }
+  document.getElementById("welcomeText").textContent=cls+"班 "+name+"，開始創作吧！";
+  loginScreen.style.display="none";
+  appContent.hidden=false;
+  window.scrollTo(0,0);
+}
+
+document.getElementById("loginForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  enterWorkshop();
+});
+document.getElementById("enterWorkshopButton").addEventListener("click",enterWorkshop);
+
+document.getElementById("logout").addEventListener("click", async ()=>{
+  if(await customConfirm("確定要登出嗎？未保存的內容將會遺失。")) {
+    appContent.hidden=true;
+    loginScreen.style.display="grid";
+    document.getElementById("loginForm").reset();
+  }
+});
+
+// 範本視窗綁定
+document.getElementById("btnShowTemplates").addEventListener("click", () => {
+  const content = document.getElementById("tplStories").innerHTML;
+  customAlert(content, "寫作範本參考");
+});
+
+let genre="奇幻冒險";
+const selected=new Set();
+document.querySelectorAll("#genres .choice").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll("#genres .choice").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active"); 
+  genre=btn.dataset.value;
+  updatePrompts(genre); // 切換故事類型時更新引導文字
+}));
+
+document.querySelectorAll("#idiomChoices .choice").forEach(btn=>btn.addEventListener("click", async ()=>{
+  const v=btn.dataset.value;
+  if(selected.has(v)){
+    selected.delete(v); btn.classList.remove("active");
+  } else if(selected.size<5){
+    selected.add(v); btn.classList.add("active");
+  } else {
+    await customAlert("最多挑選 5 個成語喔！");
+  }
+  updateCount();
+}));
+
+function getIdioms(){
+  const extra=document.getElementById("customIdioms").value.split(/[，,、\s]+/).map(x=>x.trim()).filter(Boolean);
+  return [...new Set([...selected,...extra])];
+}
+function updateCount(){ document.getElementById("idiomCount").textContent="目前選擇 "+getIdioms().length+" 個成語"; }
+document.getElementById("customIdioms").addEventListener("input",updateCount);
+const val=id=>document.getElementById(id).value.trim();
+
+document.getElementById("make").addEventListener("click", async ()=>{
+  const idioms=getIdioms();
+  if(idioms.length<3||idioms.length>5){
+    await customAlert(`請選擇或輸入 3～5 個不重複的成語，目前是 ${idioms.length} 個。`);
+    return;
+  }
+  const title=val("title")||"我的成語故事";
+  const lines=[
+    "【"+title+"】",
+    "故事類型："+genre+"｜故事風格："+(val("style")||"幽默有趣"),
+    "主角："+(val("hero")||"（尚未設定）")+"｜舞臺："+(val("place")||"（尚未設定）"),
+    "重要事件："+(val("event")||"（尚未設定）"),
+    "運用成語："+idioms.join("、"),
+    "",
+    "【開端】\n"+(val("begin")||"（請補上故事開端）"),
+    "",
+    "【發展】\n"+(val("develop")||"（請補上故事發展）"),
+    "",
+    "【轉折】\n"+(val("turn")||"（請補上故事轉折）"),
+    "",
+    "【結局】\n"+(val("end")||"（請補上故事結局）"),
+    "",
+    "【創作提醒】請檢查每個成語是否符合故事情境，並讓情節自然連貫。"
+  ];
+  document.getElementById("result").value = lines.join("\n");
+  // 自動滾動到草稿區
+  window.scrollTo({ top: document.getElementById("result").offsetTop - 50, behavior: 'smooth' });
+});
+
+document.getElementById("reset").addEventListener("click", async ()=>{
+  if(!(await customConfirm("確定要清除目前所有內容嗎？", "重新開始"))) return;
+  document.querySelectorAll("input:not([type=checkbox]),textarea").forEach(x=>x.value="");
+  document.querySelectorAll("input[type=checkbox]").forEach(x=>x.checked=false);
+  selected.clear();
+  document.querySelectorAll("#idiomChoices .choice").forEach(x=>x.classList.remove("active"));
+  updateCount();
+  document.getElementById("result").value = "";
+  
+  // 重置回預設類型
+  updatePrompts("奇幻冒險");
+  document.querySelectorAll("#genres .choice").forEach(x=>x.classList.remove("active"));
+  document.querySelector('#genres .choice[data-value="奇幻冒險"]').classList.add("active");
+  genre = "奇幻冒險";
+});
+</script>
+</body>
+</html>
